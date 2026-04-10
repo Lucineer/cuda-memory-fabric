@@ -1,0 +1,8 @@
+[package]
+name = "cuda-memory-fabric"
+version = "0.1.0"
+edition = "2021"
+description = "Memory fabric — multi-layer agent memory with working, episodic, semantic, and procedural layers"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
