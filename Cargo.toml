@@ -2,7 +2,12 @@
 name = "cuda-memory-fabric"
 version = "0.1.0"
 edition = "2021"
-description = "Memory fabric — multi-layer agent memory with working, episodic, semantic, and procedural layers"
+description = "4-layer memory — working, episodic, semantic, procedural, forgetting"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Lucineer/cuda-memory-fabric"
+readme = "README.md"
+keywords = ["ai", "fleet", "agent", "rust"]
+categories = ["science"]
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
