@@ -1,42 +1,93 @@
 # cuda-memory-fabric
 
-**Four-layer memory: Working, Episodic, Semantic, Procedural.**
+Multi-layer agent memory — working, episodic, semantic, procedural with forgetting curves (Rust)
 
-> An agent without memory is a reflex machine.
-> An agent with the right memory is an expert.
+Part of the Cocapn memory layer — how agents remember, forget, and recall.
 
-## Four Layers
+## What It Does
 
-1. **Working Memory** - Fast, limited capacity, decays in seconds. Current task context.
-2. **Episodic Memory** - Specific experiences with timestamps and emotional valence.
-3. **Semantic Memory** - General knowledge extracted from episodes. The "wisdom" layer.
-4. **Procedural Memory** - How to do things. Skills, patterns, automatic behaviors.
+### Key Types
 
-### Forgetting Curves
+- `MemoryEntry` — core data structure
+- `WorkingMemory` — core data structure
+- `WorkingItem` — core data structure
+- `EpisodicMemory` — core data structure
+- `Episode` — core data structure
+- `SemanticMemory` — core data structure
+- _and 7 more (see source)_
 
-Each layer has its own decay rate:
-- Working: seconds (half-life ~30s)
-- Episodic: days (half-life ~1 week)
-- Semantic: months (half-life ~6 months)
-- Procedural: years (half-life ~5 years)
+## Quick Start
 
-## Ecosystem Integration
+```bash
+# Clone
+git clone https://github.com/Lucineer/cuda-memory-fabric.git
+cd cuda-memory-fabric
 
-- `cuda-persistence` - Checkpoint/restore for durable memory
-- `cuda-immutable` - Persistent data structures for semantic memory
-- `cuda-learning` - Extracts lessons from episodic memory
-- `cuda-narrative` - Stories stored in episodic memory
-- `cuda-skill` - Procedural memory for skill acquisition
-- `cuda-attention` - Salience determines what enters working memory
-- `cuda-emotion` - Emotional valence strengthens episodic encoding
+# Build
+cargo build
 
-## See Also
+# Run tests
+cargo test
+```
 
-- [cuda-persistence](https://github.com/Lucineer/cuda-persistence) - State persistence
-- [cuda-learning](https://github.com/Lucineer/cuda-learning) - Experience to lesson extraction
-- [cuda-skill](https://github.com/Lucineer/cuda-skill) - Skill management
-- [cuda-attention](https://github.com/Lucineer/cuda-attention) - Attention drives memory formation
+## Usage
+
+```rust
+use cuda_memory_fabric::*;
+
+// See src/lib.rs for full API
+// 14 unit tests included
+```
+
+### Available Implementations
+
+- `WorkingMemory` — see source for methods
+- `EpisodicMemory` — see source for methods
+- `SemanticMemory` — see source for methods
+- `ProceduralMemory` — see source for methods
+- `MemoryFabric` — see source for methods
+
+## Testing
+
+```bash
+cargo test
+```
+
+14 unit tests covering core functionality.
+
+## Architecture
+
+This crate is part of the **Cocapn Fleet** — a git-native multi-agent ecosystem.
+
+- **Category**: memory
+- **Language**: Rust
+- **Dependencies**: See `Cargo.toml`
+- **Status**: Active development
+
+## Related Crates
+
+- [cuda-temporal](https://github.com/Lucineer/cuda-temporal)
+- [cuda-adaptation](https://github.com/Lucineer/cuda-adaptation)
+- [cuda-context-window](https://github.com/Lucineer/cuda-context-window)
+
+## Fleet Position
+
+```
+Casey (Captain)
+├── JetsonClaw1 (Lucineer realm — hardware, low-level systems, fleet infrastructure)
+├── Oracle1 (SuperInstance — lighthouse, architecture, consensus)
+└── Babel (SuperInstance — multilingual scout)
+```
+
+## Contributing
+
+This is a fleet vessel component. Fork it, improve it, push a bottle to `message-in-a-bottle/for-jetsonclaw1/`.
 
 ## License
 
-MIT OR Apache-2.0
+MIT
+
+---
+
+*Built by JetsonClaw1 — part of the Cocapn fleet*
+*See [cocapn-fleet-readme](https://github.com/Lucineer/cocapn-fleet-readme) for the full fleet roadmap*
