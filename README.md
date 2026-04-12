@@ -1,93 +1,63 @@
 # cuda-memory-fabric
 
-Multi-layer agent memory — working, episodic, semantic, procedural with forgetting curves (Rust)
+**Shared memory fabric for multi-VM FLUX fleets.** Typed, permission-gated, conflict-resolved.
 
-Part of the Cocapn memory layer — how agents remember, forget, and recall.
+## Overview
 
-## What It Does
+Multiple FLUX VMs ("vessels") need to share data through a unified memory space. `cuda-memory-fabric` provides a typed, permission-gated memory system where vessels can read, write, subscribe to, and synchronize across shared memory regions — with built-in conflict detection and resolution.
 
-### Key Types
+> *The Deeper Connection.*
 
-- `MemoryEntry` — core data structure
-- `WorkingMemory` — core data structure
-- `WorkingItem` — core data structure
-- `EpisodicMemory` — core data structure
-- `Episode` — core data structure
-- `SemanticMemory` — core data structure
-- _and 7 more (see source)_
+## Core Concepts
 
-## Quick Start
+### Memory Cells
+Each address holds a `MemoryCell` with a value, owner, permissions, version counter, and modification timestamp.
 
-```bash
-# Clone
-git clone https://github.com/Lucineer/cuda-memory-fabric.git
-cd cuda-memory-fabric
+### Regions
+Contiguous memory regions are allocated with a type:
+- **Private** — owner-only read/write
+- **Shared** — owner writes, all read
+- **Broadcast** — all read/write, subscribers get notified
+- **RingBuffer** / **Stack** / **Heap** — structured access patterns
 
-# Build
-cargo build
+### Fences
+Synchronization primitives for coordinating across vessels:
+- `AllArrived` — block until all listed vessels signal
+- `ValueEquals` — block until a memory cell hits a target value
+- `ConfidenceAbove` / `Quorum` — trust-based and consensus gates
 
-# Run tests
-cargo test
-```
+### Conflict Resolution
+When multiple vessels write to the same cell, conflicts are detected and resolved via pluggable strategies: LastWriterWins, TrustWeighted, QuorumVote, or Reject.
+
+## Cross-Pollination
+
+This crate integrates with the broader CUDA ecosystem:
+
+| Crate | Relationship |
+|-------|-------------|
+| **cuda-capability-ports** | Memory fabric exposes capabilities through typed ports |
+| **cuda-trust** | Trust scores feed directly into `TrustWeighted` conflict resolution |
+| **cuda-vm-scheduler** | Scheduler uses fences and barriers to coordinate VM lifecycles |
 
 ## Usage
 
 ```rust
 use cuda_memory_fabric::*;
+use cuda_memory_fabric::operations::*;
 
-// See src/lib.rs for full API
-// 14 unit tests included
+let mut fabric = MemoryFabric::new();
+
+// Allocate a broadcast region
+let base = fabric_alloc_region(&mut fabric, 16, 1, RegionType::Broadcast);
+
+// Subscribe vessel 2 to changes
+fabric_subscribe(&mut fabric, 2, base, 16, CallbackType::OnWrite);
+
+// Write and broadcast
+let notifications = fabric_broadcast_write(&mut fabric, base, 42, 1);
+// notifications delivered to vessel 2
 ```
-
-### Available Implementations
-
-- `WorkingMemory` — see source for methods
-- `EpisodicMemory` — see source for methods
-- `SemanticMemory` — see source for methods
-- `ProceduralMemory` — see source for methods
-- `MemoryFabric` — see source for methods
-
-## Testing
-
-```bash
-cargo test
-```
-
-14 unit tests covering core functionality.
-
-## Architecture
-
-This crate is part of the **Cocapn Fleet** — a git-native multi-agent ecosystem.
-
-- **Category**: memory
-- **Language**: Rust
-- **Dependencies**: See `Cargo.toml`
-- **Status**: Active development
-
-## Related Crates
-
-- [cuda-temporal](https://github.com/Lucineer/cuda-temporal)
-- [cuda-adaptation](https://github.com/Lucineer/cuda-adaptation)
-- [cuda-context-window](https://github.com/Lucineer/cuda-context-window)
-
-## Fleet Position
-
-```
-Casey (Captain)
-├── JetsonClaw1 (Lucineer realm — hardware, low-level systems, fleet infrastructure)
-├── Oracle1 (SuperInstance — lighthouse, architecture, consensus)
-└── Babel (SuperInstance — multilingual scout)
-```
-
-## Contributing
-
-This is a fleet vessel component. Fork it, improve it, push a bottle to `message-in-a-bottle/for-jetsonclaw1/`.
 
 ## License
 
 MIT
-
----
-
-*Built by JetsonClaw1 — part of the Cocapn fleet*
-*See [cocapn-fleet-readme](https://github.com/Lucineer/cocapn-fleet-readme) for the full fleet roadmap*
